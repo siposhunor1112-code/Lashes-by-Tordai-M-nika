@@ -196,19 +196,31 @@
     state.todayHours = c.todayHours;
     renderMenu();
     renderServicePicker();
+    renderCourses();
     renderHours();
     return c;
   }).catch(() => {
     $("[data-services]").innerHTML = "";
     $("[data-services]").append(h("p", { class: "muted", text: "Az árlista most nem tölthető be. Kérlek, frissítsd az oldalt, vagy hívj telefonon." }));
     $("[data-bk-services]").append(h("p", { class: "muted", text: "Az online foglalás most nem elérhető. Kérlek, hívj telefonon!" }));
+    $("[data-courses]").replaceChildren(h("p", { class: "muted", text: "Hívj, és elmondom a részleteket!" }));
   });
 
+  // online foglalható szolgáltatások csoportonként (az oktatás külön szekcióban, telefonos jelentkezéssel)
   const groups = () => {
     const map = new Map();
-    for (const s of state.services) (map.get(s.group) || map.set(s.group, []).get(s.group)).push(s);
+    for (const s of state.services.filter((x) => x.bookable !== false)) (map.get(s.group) || map.set(s.group, []).get(s.group)).push(s);
     return [...map];
   };
+
+  function renderCourses() {
+    const box = $("[data-courses]");
+    const list = state.services.filter((x) => x.bookable === false);
+    box.replaceChildren(...list.map((c) => h("article", { class: "course" },
+      h("h3", { text: c.name }),
+      h("p", { text: c.desc }),
+      h("span", { class: "course__price", text: c.price ? price(c.price) : "Ár egyeztetés alapján" }))));
+  }
 
   function renderMenu() {
     const box = $("[data-services]");
@@ -296,7 +308,19 @@
   function renderServicePicker() {
     const box = $("[data-bk-services]");
     box.innerHTML = "";
-    for (const [g, items] of groups()) {
+    const all = groups();
+    // telefonon kategória-gombok: egyszerre csak egy csoport látszik, hogy ne kelljen hosszan görgetni
+    const cats = h("div", { class: "bk-cats", role: "tablist", "aria-label": "Kategória" });
+    const setCat = (i) => {
+      $$(".bk-cats button", box).forEach((b, j) => b.setAttribute("aria-selected", String(i === j)));
+      $$(".bk-group", box).forEach((g, j) => g.classList.toggle("is-cat", i === j));
+    };
+    all.forEach(([g], i) => cats.append(h("button", { type: "button", role: "tab", "aria-selected": "false", onclick: (e) => {
+      setCat(i);
+      e.currentTarget.scrollIntoView({ block: "nearest", inline: "center", behavior: reduced ? "auto" : "smooth" });
+    } }, g.replace(" · UV technológia", ""))));
+    box.append(cats);
+    for (const [g, items] of all) {
       box.append(h("div", { class: "bk-group" },
         h("p", { class: "bk-group__title", text: g }),
         items.map((s) => h("button", {
@@ -304,7 +328,10 @@
           onclick: () => pickService(s.id),
         }, h("b", { text: s.name }), h("small", { text: dur(s.duration) }), h("span", { class: "svc__price", text: price(s.price) })))));
     }
+    setCat(0);
+    state.setCat = (id) => setCat(all.findIndex(([, items]) => items.some((x) => x.id === id)));
   }
+
 
   async function pickService(id) {
     await configReady;
@@ -313,6 +340,7 @@
     state.service = id;
     state.time = null;
     $$(".svc").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.id === id)));
+    if (state.setCat) state.setCat(id);
     $("[data-sum-service]").textContent = s.name;
     $("[data-sum-when]").textContent = "—";
     state.maxStep = 2;
@@ -689,7 +717,7 @@
     dock.classList.toggle("is-shown", !hide);
   });
   [$(".hero__actions"), $("#foglalas"), $(".foot")].forEach((el) => el && dockIo.observe(el));
-  dock.addEventListener("click", () => {
+  $(".dock__book", dock).addEventListener("click", () => {
     if (!state.service) setTimeout(() => $(".svc") && $(".svc").focus({ preventScroll: true }), 600);
   });
 })();

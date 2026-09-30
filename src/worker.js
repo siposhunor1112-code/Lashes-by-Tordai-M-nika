@@ -13,6 +13,9 @@ import { SALON, SERVICES } from "./config.js";
 import { addDays, daySlots, isDate, isTime, nowLocal, openingHours, toHHMM, toMin, weekday } from "./schedule.js";
 
 const serviceById = (id) => SERVICES.find((s) => s.id === id);
+// online csak ezek foglalhatók (az oktatás pl. telefonon egyeztetve)
+const BOOKABLE = SERVICES.filter((s) => s.bookable !== false);
+const bookableById = (id) => BOOKABLE.find((s) => s.id === id);
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -146,7 +149,8 @@ export class Naptar extends DurableObject {
 
   // Legközelebbi szabad időpont bármelyik (vagy a megadott) szolgáltatáshoz – a nyitókép élő jelzéséhez
   nextFree(serviceId) {
-    const service = serviceById(serviceId) || SERVICES.reduce((a, b) => (a.duration <= b.duration ? a : b));
+    // alapból a legrövidebb szempilla-szolgáltatás (a nyitókép „legközelebbi szabad” jelzéséhez)
+    const service = bookableById(serviceId) || bookableById("klasszikus") || BOOKABLE[0];
     const now = nowLocal();
     const to = addDays(now.date, SALON.horizonDays);
     const get = this.dayData(now.date, to);
@@ -350,7 +354,7 @@ function guestMail(env, b, origin) {
 
 function validateBooking(body, { admin = false } = {}) {
   if (!body || typeof body !== "object") throw new HttpError(400, "Hibás kérés.");
-  const service = serviceById(body.service);
+  const service = bookableById(body.service);
   if (!service) throw new HttpError(400, "Válassz szolgáltatást!");
   if (!isDate(body.date) || !isTime(body.time)) throw new HttpError(400, "Válassz napot és időpontot!");
   const name = clean(body.name, 80);
@@ -409,7 +413,7 @@ async function handleApi(request, env, ctx) {
   }
 
   if (method === "GET" && path === "/api/availability") {
-    const service = serviceById(q("service"));
+    const service = bookableById(q("service"));
     const from = q("from"), to = q("to");
     if (!service) throw new HttpError(400, "Ismeretlen szolgáltatás.");
     if (!isDate(from) || !isDate(to) || to < from || Date.parse(to) - Date.parse(from) > 62 * 86400000) throw new HttpError(400, "Hibás időszak.");
@@ -417,7 +421,7 @@ async function handleApi(request, env, ctx) {
   }
 
   if (method === "GET" && path === "/api/slots") {
-    const service = serviceById(q("service"));
+    const service = bookableById(q("service"));
     if (!service) throw new HttpError(400, "Ismeretlen szolgáltatás.");
     if (!isDate(q("date"))) throw new HttpError(400, "Hibás dátum.");
     return json(await cal.slots(service.id, q("date")));

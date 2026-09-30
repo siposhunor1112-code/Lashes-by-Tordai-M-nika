@@ -25,7 +25,9 @@ Cloudflare Workers-en fut: a `public/` a weboldal, a `src/` a foglalási rendsze
 
 ## Így működik a foglalás
 
-1. **Szolgáltatás** – csoportosítva (szempilla-építés, töltés, lifting & szemöldök, egyéb), idővel és árral.
+1. **Szolgáltatás** – csoportosítva (szempilla-építés UV technológiával, töltés, lifting, füllyukasztás, svédmasszázs),
+   idővel és árral. Telefonon felül kategória-gombok, így egyszerre csak egy csoport látszik.
+   A **szempilla-oktatás** külön szekcióban szerepel, és telefonon lehet rá jelentkezni (`bookable: false`).
 2. **Időpont** – havi naptár; minden napon látszik, hány szabad időpont van („14 szabad”, „még 2”, „betelt”,
    „zárva”, „ünnep”). A nap kiválasztása után az összes kezdési időpont látszik: **szabad**, **foglalt** (áthúzva,
    csíkozva) vagy **már nem foglalható**. Betelt napnál egy gomb a következő szabad napra ugrik.
@@ -78,25 +80,35 @@ Helyben: `npm install`, majd `.dev.vars` fájlba `ADMIN_PASSWORD=valami`, és `n
 - Nyitókép: boltíves „tükör”, benne csukott szem – a pillák betöltéskor egyenként kerülnek fel a belső saroktól
   kifelé, a külső felén volume-legyezőkkel, mint egy valódi szettnél. Mellette élő **„Legközelebbi szabad
   időpont”** jelzés
-- Szekciók: Szolgáltatások & árak (étlapszerű) · Az élmény (4 lépés) · Rólam · Online foglalás · Tudnivalók (GYIK) ·
-  Kapcsolat (nyitvatartás a mai nap kiemelésével, „Most nyitva / zárva”)
-- Telefonra optimalizálva (390 és 320 px-en is): nincs vízszintes görgetés, legalább 44 px-es érintési felületek,
-  alul lebegő „Szabad időpontok” gomb, amely elbújik, ha a foglalás vagy a lábléc látszik
+- Szekciók: Szolgáltatások & árak (étlapszerű) · Az élmény (4 lépés) · Rólam · Szempilla-oktatás · Online foglalás ·
+  Tudnivalók (GYIK, benne: mi az a UV technológia) · Kapcsolat (nyitvatartás a mai nap kiemelésével, „Most nyitva / zárva”)
+- **Telefonra optimalizálva** – 320, 360, 390 px-en és fekvő telefonon képernyőnként ellenőrizve, automatikus
+  méréssel (nincs vízszintes görgetés, minden gomb és link legalább 44 px-es érintési felület):
+  - a nyitóképen alacsonyabb boltív, így a cím, a „Időpontot foglalok” gomb és a legközelebbi szabad időpont is az
+    első képernyőn van
+  - a fejléc nem átlátszó; benne rövid „Foglalás” gomb, kerek hívógomb és menü (350 px alatt csak hívás + menü);
+    a menü alján foglalás és hívás gomb
+  - alul lebegő sáv: **Hívás** + **Szabad időpontok** (420 px alatt a hívás csak ikon); elbújik, amíg a nyitókép
+    gombjai, a foglalás vagy a lábléc látszik
+  - foglalás: kategória-gombok, tömörebb szolgáltatáskártyák, a naptárban keskeny kijelzőn csak a szabad helyek
+    száma (a „szabad” szó nélkül), 380 px alatt pöttyökkel; időpontok 4 (320 px-en 3) oszlopban
+  - a nyitvatartás-kártya, a kapcsolati adatok és minden rács összenyomható, semmi nem lóg ki
 - Aki kikapcsolta az animációkat, annak minden azonnal kész
 
 ## ⚠️ Élesítés előtt kötelező kicserélni
 
-Tordai Mónikáról nincs nyilvános adat a neten, ezért ezek **helyőrzők**:
+A telefonszám (06 30 821 2033) és a szolgáltatások köre valós. Tordai Mónikáról ezen túl nincs nyilvános adat a neten, ezért ezek **helyőrzők**:
 
 | Mi | Hol |
 | --- | --- |
-| Telefonszám (`+36 30 000 0000`) | `public/index.html` (3 helyen + strukturált adat), `public/lemondas.js` (`PHONE`), `public/adatvedelem.html` |
 | Cím (`Budapest, Példa utca 1.`) | `public/index.html` (kapcsolat + strukturált adat + térképlink), `public/adatvedelem.html` |
 | Instagram (`@lashesbytordaimonika`) | `public/index.html` (2 helyen) |
 | Árak, időtartamok, szolgáltatások | `src/config.js` (`SERVICES`) |
 | Nyitvatartás | `src/config.js` (`SALON.hours`) és a strukturált adat az `index.html` fejében |
 | „Rólam” szöveg, a „TM” monogram helyére fotó | `public/index.html` (`#monika`) |
 | Szabályok (lemondás, késés, töltés feltétele) | `public/index.html` (`#tudnivalok`), `src/config.js` |
-| Tények a nyitóképen (1:1, 0 Ft eltávolítás) | `public/index.html` (`.facts`) |
+| Tények a nyitóképen (1:1, UV, +3) | `public/index.html` (`.facts`) |
+| Oktatás: tematika, „gyakorlás élő modellen”, utánkövetés, ár | `public/index.html` (`#oktatas`), `src/config.js` |
+| Füllyukasztás és masszázs leírása, időtartama, ára | `src/config.js` |
 
-A `styles.css` és a `script.js` hivatkozásában verziószám van (`?v=1`): módosítás után érdemes növelni.
+A `styles.css` és a `script.js` hivatkozásában verziószám van (`?v=2`): módosítás után érdemes növelni.

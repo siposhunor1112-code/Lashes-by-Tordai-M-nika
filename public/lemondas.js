@@ -1,7 +1,7 @@
 /* Foglalás megtekintése és lemondása a foglaláskor kapott linkkel (/lemondas?kod=…&t=…) */
 (() => {
   "use strict";
-  const PHONE = { href: "tel:+36300000000", text: "+36 30 000 0000" };
+  const PHONE = { href: "tel:+36308212033", text: "06 30 821 2033" };
   const $ = (s) => document.querySelector(s);
   const q = new URLSearchParams(location.search);
   const code = q.get("kod") || "", token = q.get("t") || "";

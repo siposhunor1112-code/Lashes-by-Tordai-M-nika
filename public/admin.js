@@ -81,7 +81,7 @@
     logoutBtn.hidden = false;
     if (!services.length) {
       const c = await fetch("/api/config").then((r) => r.json());
-      services = c.services;
+      services = c.services.filter((s) => s.bookable !== false);
       $("#n-service").replaceChildren(...services.map((s) => h("option", { value: s.id, text: `${s.name} (${s.duration} perc)` })));
     }
     $("#n-date").value = $("#n-date").value || today();

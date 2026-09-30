@@ -39,7 +39,7 @@ const og = `<style>${base}
 <div class="wrap">
   <div class="brand">Lashes by Tordai Mónika</div>
   <h1>Pillantás,<br>ami <em>megmarad.</em></h1>
-  <p>Szempilla-építés · lifting · szemöldök<br>Online foglalás, élő szabad időpontokkal</p>
+  <p>UV szempilla-építés · lifting · oktatás<br>Füllyukasztás · svédmasszázs · online foglalás</p>
 </div>
 <div class="arch">${EYE(250, 0.6)}<span>Lashes</span></div>`;
 
