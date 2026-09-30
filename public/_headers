@@ -1,0 +1,26 @@
+# Biztonsági fejlécek – a Cloudflare minden oldalhoz hozzáadja őket.
+# CSP: csak a saját fájljaink futhatnak, és csak a saját /api/ címünkkel beszélhetnek.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin
+
+# A lemondási és az admin oldal címében titkos kód van: ne kerüljön tovább más oldalakra
+/lemondas*
+  Referrer-Policy: no-referrer
+  X-Robots-Tag: noindex
+/admin*
+  Referrer-Policy: no-referrer
+  X-Robots-Tag: noindex
+  Cache-Control: no-store
+
+# A betűtípusok soha nem változnak: a böngésző egy évig tárolhatja őket
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=604800

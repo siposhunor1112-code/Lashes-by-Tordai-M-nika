@@ -1,0 +1,21 @@
+// Cloudflare Workers beállítás: a public/ mappa a weboldal, a src/worker.js pedig a foglalási rendszer (/api/...).
+// A "name" egyezzen meg a Cloudflare-ben lévő projekt nevével.
+// A foglalásokat a Naptar nevű Durable Object tárolja (SQLite) – ehhez nem kell külön adatbázist létrehozni,
+// az első telepítéskor magától elkészül (az ingyenes csomagban is elérhető).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lashes-by-tordai-monika",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "NAPTAR", "class_name": "Naptar" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Naptar"] }],
+  "observability": { "enabled": true }
+}

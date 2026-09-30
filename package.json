@@ -1,0 +1,23 @@
+{
+  "name": "lashes-by-tordai-monika",
+  "version": "1.0.0",
+  "description": "Lashes by Tordai Mónika – weboldal online időpontfoglalással",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test tests/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siposhunor1112-code/Lashes-by-Tordai-M-nika.git"
+  },
+  "bugs": {
+    "url": "https://github.com/siposhunor1112-code/Lashes-by-Tordai-M-nika/issues"
+  },
+  "homepage": "https://github.com/siposhunor1112-code/Lashes-by-Tordai-M-nika#readme",
+  "devDependencies": {
+    "wrangler": "^4.145.0"
+  },
+  "private": true,
+  "type": "module"
+}
